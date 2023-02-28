@@ -65,6 +65,11 @@ mod tests {
 
     #[test]
     fn test_list_dir() {
-        list_dir("C:\\").unwrap();
+        let lib = list_dir("./")
+            .unwrap()
+            .iter()
+            .any(|file| file.path() == "./Cargo.toml");
+
+        assert!(lib);
     }
 }
