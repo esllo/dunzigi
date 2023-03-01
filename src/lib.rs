@@ -70,6 +70,8 @@ pub fn read_file(path: &str) -> std::io::Result<Vec<u8>> {
 
 #[cfg(test)]
 mod tests {
+    use std::str::from_utf8;
+
     use super::*;
 
     #[test]
@@ -80,5 +82,15 @@ mod tests {
             .any(|file| file.path() == "./Cargo.toml");
 
         assert!(lib);
+    }
+
+    #[test]
+    fn test_read_file() {
+        let cargo = read_file("./Cargo.toml").unwrap();
+        let content = from_utf8(&cargo).unwrap();
+        assert!(content.starts_with("[package]"));
+
+        let none = read_file("./not.exists").unwrap_err();
+        assert_eq!(none.kind(), NotFound);
     }
 }
