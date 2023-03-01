@@ -1,7 +1,8 @@
 use std::error::Error;
 use std::fmt;
-use std::fs::read_dir;
+use std::fs::{read_dir, File};
 use std::io::ErrorKind::{NotFound, PermissionDenied};
+use std::io::Read;
 
 #[derive(Debug)]
 pub enum ListError {
@@ -57,6 +58,14 @@ pub fn list_dir(path: &str) -> Result<Vec<ListedFile>, ListError> {
             _ => Err(ListError::Unknown),
         },
     }
+}
+
+pub fn read_file(path: &str) -> std::io::Result<Vec<u8>> {
+    let mut file = File::open(path)?;
+    let mut buffers = Vec::new();
+    file.read_to_end(&mut buffers)?;
+
+    Ok(buffers)
 }
 
 #[cfg(test)]
