@@ -4,6 +4,8 @@ use std::fs::{read_dir, File};
 use std::io::ErrorKind::{NotFound, PermissionDenied};
 use std::io::Read;
 
+mod socket;
+
 #[derive(Debug)]
 pub enum ListError {
     NotFound,
