@@ -26,6 +26,7 @@ impl fmt::Display for ListError {
 pub struct ListedFile {
     is_dir: bool,
     path: String,
+    name: String,
 }
 
 impl ListedFile {
@@ -35,6 +36,10 @@ impl ListedFile {
 
     pub fn path(&self) -> String {
         self.path.to_string()
+    }
+
+    pub fn name(&self) -> String {
+        self.name.to_string()
     }
 }
 
@@ -46,8 +51,9 @@ pub fn list_dir(path: &str) -> Result<Vec<ListedFile>, ListError> {
                 let _file = file.unwrap();
                 let path = _file.path().into_os_string().into_string().unwrap();
                 let is_dir = _file.file_type().unwrap().is_dir();
+                let name = _file.file_name().into_string().unwrap();
 
-                vec.push(ListedFile { is_dir, path })
+                vec.push(ListedFile { is_dir, path, name })
             }
 
             Ok(vec)
@@ -76,12 +82,15 @@ mod tests {
 
     #[test]
     fn test_list_dir() {
-        let lib = list_dir("./")
-            .unwrap()
+        let list = list_dir("./").unwrap();
+        let cargo = list
             .iter()
-            .any(|file| file.path() == "./Cargo.toml");
+            .find(|file| file.path() == "./Cargo.toml")
+            .unwrap();
 
-        assert!(lib);
+        assert_eq!(cargo.name(), "Cargo.toml");
+        assert_eq!(cargo.path(), "./Cargo.toml");
+        assert_eq!(cargo.is_dir(), false);
     }
 
     #[test]
